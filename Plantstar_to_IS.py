@@ -8,11 +8,13 @@ Created on Thu May 17 11:35:28 2018
 from __future__ import division
 import sys
 import time
+import logging
 import mysql.connector
 from mysql.connector import errorcode
 from ISStreamer.Streamer import Streamer
 
 # https://www.esri.com/arcgis-blog/products/product/analytics/scheduling-a-python-script-or-model-to-run-at-a-prescribed-time/
+logging.basicConfig(filename='exceptions.log', level=logging.DEBUG)
 
 while True:
     try:
@@ -117,15 +119,18 @@ while True:
     except mysql.connector.Error as err:
       if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
           print "Something is wrong with your user name or password"
+          logging.info("Something is wrong with your user name or password")
       elif err.errno == errorcode.ER_BAD_DB_ERROR:
           print "Database does not exist"
+          logging.info("Database does not exist")
       else:
           print "An unknown mySQL database error occured"
-    
+          logging.info("An unknown mySQL database error occured")
     except IOError as (errno, strerror):
         print "I/O error({0}): {1}".format(errno, strerror)
-        
+        logging.info("I/O error({0}): {1}".format(errno, strerror))
     except:
         print "Unexpected error:", sys.exc_info[0]
+        logging.info("Unexpected error:", sys.exc_info[0])
         raise
     time.sleep(300)
